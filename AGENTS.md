@@ -8,7 +8,7 @@ This is the **Core2** repo (`wtthornton/Core2`). Keep writes in this tree and in
 |-------|-------|
 | GitHub | https://github.com/wtthornton/Core2 |
 | Linear team | `TappsCodingAgents` (`TAP`) |
-| Linear project | `Core2` |
+| Linear project | `Core2` (https://linear.app/tappscodingagents/project/core2-7d22b9d8efd1) |
 | Agent assignee | `Claude Agent` |
 | Config | `.tapps-mcp.yaml` |
 

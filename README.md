@@ -1,6 +1,9 @@
 # Core2
 
-Public workspace for Core2, tracked in Linear project **Core2** on team **TappsCodingAgents**.
+Public workspace for Core2.
+
+- GitHub: https://github.com/wtthornton/Core2
+- Linear: https://linear.app/tappscodingagents/project/core2-7d22b9d8efd1 (team **TappsCodingAgents**, project **Core2**)
 
 ## Cursor
 
