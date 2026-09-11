@@ -1,0 +1,30 @@
+---
+alwaysApply: true
+description: Cursor MCP and environment setup for Core2
+---
+
+# Cursor setup (Core2)
+
+## MCP servers (`.cursor/mcp.json`)
+
+| Server | Purpose |
+|--------|---------|
+| `linear` | Official Linear MCP (`https://mcp.linear.app/mcp`) — issues, projects, teams |
+| `nlt-build` | Score, gate, quick_check, validate_changed, security, lookup_docs |
+| `nlt-memory` | Session notes + brain bridge helpers |
+| `nlt-setup` | Doctor, init, engagement |
+| `nlt-linear-issues` | Issue/epic generators + validators — required for the `linear-issue` skill |
+| `nlt-project-docs` | Docs generators / validators |
+| `nlt-release-ship` | Release update flow |
+
+Local NLT servers use the shared HTTP fleet on `127.0.0.1:8760-8765` with `X-Tapps-Project-Root` set to this workspace.
+
+## Linear connect (once)
+
+1. Enable the `linear` server in **Settings → Tools & MCP**
+2. Complete browser OAuth when prompted
+3. Verify: `list_teams` → `TappsCodingAgents`; project → `Core2`
+
+## Reload after config changes
+
+**Ctrl+Shift+P → Developer: Reload Window** after editing `.cursor/mcp.json` or `.tapps-mcp.yaml`.

@@ -1,0 +1,25 @@
+---
+alwaysApply: true
+description: Keep agent writes inside the Core2 repo and Linear project
+---
+
+# Agent scope (Core2)
+
+Agents in this workspace must stay scoped to THIS repo and THIS Linear project for any **write** operation.
+
+## Allowed (read)
+
+- Documentation lookups across any project.
+- Searching memory across federated projects to inform decisions.
+- Browsing sibling repositories for reference only.
+
+## Forbidden (write outside Core2)
+
+- Creating, updating, commenting on, or moving Linear issues that belong to a different project than **Core2**.
+- Modifying files, branches, or pull requests in any other repository.
+- Pushing, merging, releasing, or running automation for another project.
+
+## How to apply
+
+- Read team / project / repo identity from `.tapps-mcp.yaml` or the current git remote.
+- When in doubt whether a target belongs to this project, stop and ask the user instead of writing.

@@ -1,0 +1,15 @@
+agent_user: Claude Agent
+cursor_stop_completion_gate: warn
+linear_team: TappsCodingAgents
+linear_project: Core2
+llm_engagement_level: medium
+mcp_bundle: full
+mcp_transport: http
+memory:
+  brain_project_id: core2
+  profile: document-builder
+memory_hooks:
+  auto_capture:
+    enabled: false
+  auto_recall:
+    enabled: true

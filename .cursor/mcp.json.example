@@ -1,0 +1,51 @@
+{
+  "_comment": "Copy to .cursor/mcp.json. Linear uses OAuth on first connect. NLT servers talk to the local TappsMCP HTTP fleet.",
+  "mcpServers": {
+    "linear": {
+      "type": "streamableHttp",
+      "url": "https://mcp.linear.app/mcp"
+    },
+    "nlt-build": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8760/mcp",
+      "headers": {
+        "X-Tapps-Project-Root": "C:/code/Core2"
+      }
+    },
+    "nlt-memory": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8761/mcp",
+      "headers": {
+        "X-Tapps-Project-Root": "C:/code/Core2"
+      }
+    },
+    "nlt-setup": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8762/mcp",
+      "headers": {
+        "X-Tapps-Project-Root": "C:/code/Core2"
+      }
+    },
+    "nlt-linear-issues": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8763/mcp",
+      "headers": {
+        "X-Tapps-Project-Root": "C:/code/Core2"
+      }
+    },
+    "nlt-project-docs": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8764/mcp",
+      "headers": {
+        "X-Tapps-Project-Root": "C:/code/Core2"
+      }
+    },
+    "nlt-release-ship": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8765/mcp",
+      "headers": {
+        "X-Tapps-Project-Root": "C:/code/Core2"
+      }
+    }
+  }
+}
