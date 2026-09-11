@@ -1,0 +1,27 @@
+# Core2
+
+## Key Files
+
+- `README.md`
+- `AGENTS.md`
+- `LICENSE`
+- `.env.example`
+- `.tapps-mcp.yaml`
+
+## Documentation Map
+
+- `AGENTS.md`
+- `llms.txt`
+- `README.md`
+- `docs/INDEX.md`
+- `docs/kb/display.md`
+- `docs/kb/expansion.md`
+- `docs/kb/hardware.md`
+- `docs/kb/overview.md`
+- `docs/kb/pinout.md`
+- `docs/kb/power.md`
+- `docs/kb/README.md`
+- `docs/kb/software.md`
+- `docs/kb/sources.md`
+- `docs/kb/variants.md`
+- `docs/kb/wireless.md`

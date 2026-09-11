@@ -1,0 +1,54 @@
+# Core2
+
+> M5Stack Core2 (ESP32-D0WDQ6-V3) hardware and firmware knowledge base.
+
+## Summary
+
+This repo documents the M5Stack **Core2** IoT controller: 240 MHz dual-core
+Xtensa LX6, 16 MB flash, 8 MB PSRAM, 2.0" 320×240 ILI9342C capacitive
+touchscreen, 2.4 GHz Wi-Fi + Bluetooth 4.2, AXP192/AXP2101 PMU, and Grove /
+M-Bus expansion. It does **not** run Linux. This workspace’s custom app is
+PlatformIO + **M5Unified** (no M5Burner). Other images that run: UiFlow,
+ESP-IDF BSP, CircuitPython, Zephyr.
+
+## Start here
+
+- [docs/kb/overview.md](docs/kb/overview.md) — what it can do
+- [docs/firmware/PLAN.md](docs/firmware/PLAN.md) — custom M5Unified app
+- [docs/INDEX.md](docs/INDEX.md) — generated documentation map
+- [docs/kb/sources.md](docs/kb/sources.md) — vendor URLs
+
+## Knowledge base
+
+- [docs/kb/hardware.md](docs/kb/hardware.md) — full BOM and mechanical specs
+- [docs/kb/display.md](docs/kb/display.md) — screen, touch, SPI
+- [docs/kb/wireless.md](docs/kb/wireless.md) — Wi-Fi, BLE, ESP-NOW
+- [docs/kb/power.md](docs/kb/power.md) — battery and PMU revisions
+- [docs/kb/pinout.md](docs/kb/pinout.md) — Grove, M-Bus, I2C
+- [docs/kb/software.md](docs/kb/software.md) — firmware / RTOS matrix
+- [docs/kb/usb-flash.md](docs/kb/usb-flash.md) — USB-UART and esptool flash path
+- [docs/kb/variants.md](docs/kb/variants.md) — v1.0 / v1.1 / v1.3 / AWS
+- [docs/kb/expansion.md](docs/kb/expansion.md) — stacking and M5GO Bottom2
+
+## Do not confuse with
+
+- **CoreS3** — ESP32-S3, camera, USB-OTG
+- **Tough** — industrial sealed HMI, different touch IC
+
+## Spec cheat sheet
+
+| Item | Value |
+|------|-------|
+| SoC | ESP32-D0WDQ6-V3, dual LX6, 240 MHz, 600 DMIPS |
+| Memory | 520 KB SRAM, 16 MB flash, 8 MB PSRAM |
+| Display | 2.0" IPS 320×240 ILI9342C, RGB565 SPI |
+| Touch | FT6336U @ 0x38, 3 virtual front buttons |
+| Radio | 2.4 GHz Wi-Fi 802.11 b/g/n + Bluetooth 4.2 BR/EDR+BLE |
+| PMU | AXP192 (v1.0/v1.3) or AXP2101+INA3221 (v1.1) |
+| IMU | MPU6886 (v1.0/v1.1) or BMI270 (v1.3) @ 0x68 |
+| Battery | 3.7 V, 500 mAh current docs (early units 390 mAh) |
+| OS | No Linux. This repo: PlatformIO + M5Unified. Also UiFlow, IDF, CircuitPython, Zephyr |
+
+## Optional full dump
+
+See [llms-full.txt](llms-full.txt). Brain import: `docs/kb/memory-seed.json`.
