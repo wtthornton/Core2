@@ -18,36 +18,40 @@ AF_API_KEY      // afp_… project key (desk credential; not af_* / admin)
 
 `AF_URL` remains an alias for `AF_BASE_URL`.
 
-## Device → AgentForge
+## Device → AgentForge (project-scoped `afp_`)
 
 | Method | Path | Auth | Maps to |
 |--------|------|------|---------|
 | GET | `/health` | none | reachable, version, degraded |
 | GET | `/ready` | none | ready |
 | GET | `/projects/{slug}` | Bearer `afp_` | auth self-check (200 vs 401) |
-| GET | `/stats/summary` | Bearer | inv, err, cost, agent |
-| GET | `/stats/dashboard?days=7` | Bearer | Trend sparklines |
-| GET | `/stats/failures?limit=5` | Bearer | Issues + poll-alert stopgap |
-| GET | fleet SSE (TBD TAP-7503) | Bearer | live haptic alerts |
+| GET | `/projects/{slug}/stats` | Bearer | inv, err, cost, agent |
+| GET | `/projects/{slug}/activity-series?days=7` | Bearer | Trail charts |
+| GET | `/projects/{slug}/dual-meters` | Bearer | Heat error count |
+| GET | `/projects/{slug}/invocations?limit=5` | Bearer | recent rows |
+| GET | `/projects/{slug}/events` | Bearer | future SSE (TAP-7503 fleet still separate) |
+
+**Do not** call fleet `/stats/*` with an `afp_` key — AF returns 403
+(`stats_scope_required` / `cross-project-denied`). Fleet monitor needs a
+platform key or TAP-7503; Core2 firmware stays on project routes only.
 
 Poll interval ~5s while Wi-Fi connected.
 
 ### Auth
 
-- Prefer gated `GET /projects/{slug}` with the project key — `/health` alone proves nothing.
-- HTTP 401/403 on project or `/stats/*` → Status degraded, agent `need afp_ key`.
+- Prefer gated `GET /projects/{slug}` — `/health` alone proves nothing.
+- HTTP 401/403 on project routes → Status **Need key**.
 - Device holds **`afp_` only** — never platform `af_*` or `AF_PLUGIN_ADMIN_KEY`.
 
 ### Poll-alert stopgap (TAP-7502)
 
-When `last_24h_count` rises vs previous poll, firmware raises a local alert
-(`src=stats.failures`). Real fleet SSE waits on **TAP-7503**.
+When dual-meters `error_count` rises vs previous poll, firmware raises a local
+alert. Real fleet SSE waits on **TAP-7503**.
 
-## Buttons
+## Buttons / faces
 
-- **A** — ack local alert
-- **B** — mute haptics 15 minutes (local)
-- **C** — cycle Status → Issues → Trend
+Ops-cube faces: Hub · Pulse · Heat · Trail · Beam. Soft keys Prev / Quiet / Next.
+Swipe or tap face chips. BtnA/B/C map to the same.
 
 ## Deleted
 
