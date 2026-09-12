@@ -1,4 +1,4 @@
 esptool>=5.4
 pyserial>=3.5
-platformio>=6.1
+platformio>=6.2.0
 pytest>=8.0
