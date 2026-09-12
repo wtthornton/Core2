@@ -57,12 +57,14 @@ void setup() {
 void loop() {
   M5.update();
   protocol_poll_serial();
-  net_poll();
 
+  // Touch first so UI stays snappy even if a poll step runs next.
   if (M5.Touch.isEnabled()) {
-    const auto count = M5.Touch.getCount();
-    if (count > 0) {
-      const auto t = M5.Touch.getDetail(0);
+    const auto t = M5.Touch.getDetail(0);
+    if (t.wasClicked()) {
+      ui_handle_touch(t.x, t.y);
+      ui_touch_release(t.x, t.y);  // clear any swipe latch
+    } else {
       if (t.wasPressed()) {
         ui_handle_touch(t.x, t.y);
       }
@@ -71,6 +73,8 @@ void loop() {
       }
     }
   }
+
+  net_poll();
 
   if (M5.BtnA.wasPressed()) {
     protocol_prev_screen();
@@ -93,5 +97,5 @@ void loop() {
   M5.Power.setLed(snap.ready && snap.reachable ? 255 : 0);
 
   ui_draw();
-  delay(16);
+  delay(10);
 }

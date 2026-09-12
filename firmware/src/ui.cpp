@@ -439,18 +439,21 @@ bool ui_handle_touch(int x, int y) {
   if (y < kStripH) {
     const int n = static_cast<int>(Screen::Count);
     const int tw = (w - kTabPad * 2 - kTabGap * (n - 1)) / n;
-    if (x < kTabPad) {
-      return false;
+    if (x >= kTabPad) {
+      const int idx = (x - kTabPad) / (tw + kTabGap);
+      if (idx >= 0 && idx < n) {
+        protocol_set_screen(static_cast<Screen>(idx));
+        g_face_anim_ms = millis();
+        g_touch_x0 = -1;  // tab tap is not a swipe
+        return true;
+      }
     }
-    const int idx = (x - kTabPad) / (tw + kTabGap);
-    if (idx >= 0 && idx < n) {
-      protocol_set_screen(static_cast<Screen>(idx));
-      g_face_anim_ms = millis();
-      return true;
-    }
+    g_touch_x0 = -1;
+    return false;
   }
   if (y >= h - kBtnH) {
     const int btn = x * 3 / w;
+    g_touch_x0 = -1;
     if (btn == 0) {
       protocol_prev_screen();
       g_face_anim_ms = millis();
@@ -469,10 +472,10 @@ bool ui_handle_touch(int x, int y) {
       g_face_anim_ms = millis();
       return true;
     }
+    return false;
   }
-  if (g_touch_x0 < 0) {
-    g_touch_x0 = x;
-  }
+  // Mid-screen: arm swipe only (faces change on release).
+  g_touch_x0 = x;
   return false;
 }
 
