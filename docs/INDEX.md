@@ -19,7 +19,10 @@ mis-bins files whose body text contains short tokens like `ci`).
 | [docs/kb/pinout.md](kb/pinout.md) | Grove, M-Bus, I2C, SPI, I2S |
 | [docs/kb/software.md](kb/software.md) | UiFlow, Arduino, IDF, Zephyr, CircuitPython |
 | [docs/kb/usb-flash.md](kb/usb-flash.md) | USB-UART, esptool, loading a new image |
-| [docs/firmware/PLAN.md](firmware/PLAN.md) | Custom M5Unified app plan |
+| [docs/firmware/VISION.md](firmware/VISION.md) | **Locked vision: brick → AF direct (no host bridge)** |
+| [docs/firmware/IMPLEMENTATION_PLAN.md](firmware/IMPLEMENTATION_PLAN.md) | Full reset plan: docs, Linear, code, verify |
+| [docs/firmware/PLAN.md](firmware/PLAN.md) | AgentForge ops HMI plan + middleware cleanup |
+| [docs/firmware/PROTOCOL.md](firmware/PROTOCOL.md) | Device → AF HTTP/SSE (direct) |
 | [docs/kb/variants.md](kb/variants.md) | v1.0 / v1.1 / v1.3 / AWS vs CoreS3 |
 | [docs/kb/expansion.md](kb/expansion.md) | Stacking rules, M5GO Bottom2 |
 | [docs/kb/sources.md](kb/sources.md) | Vendor URLs |

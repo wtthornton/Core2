@@ -1,98 +1,114 @@
-# Plan: custom Core2 app (no M5 tools)
+# Plan: Core2 AgentForge monitor HMI
 
-Status: **bring-up firmware built and flashed to COM4**.
-This unit: original Core2, CP2104 **COM4**, AXP192, MPU6886, 16 MB flash.
-On-device image: this repo’s `firmware/` dashboard (replaced WLED on 2026-09-11).
+Status: **ARCHITECTURE RESET (2026-09-12).** Product path is
+**Core2 → AgentForge directly**. Host middleware (`af_bridge`) is **deprecated
+and scheduled for deletion**. See [Cleanup plan](#cleanup-plan) below.
+
+**Vision (source of truth):** [VISION.md](VISION.md)  
+**Full execution plan:** [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)  
+Hard rule: `.cursor/rules/core2-af-direct.mdc`.
+
+Hardware: original Core2, CP2104 **COM4**, AXP192, MPU6886, 16 MB flash.
 
 ## Goal
 
-A custom application owned in this repo that uses the Core2’s onboard
-hardware. No M5Burner, no UiFlow, no M5 desktop IDE. Agents flash over
-USB-UART with PlatformIO / esptool.
+Desk-side HMI **on the brick**. Firmware (C++ / M5Unified + M5GFX) polls and
+subscribes to **AgentForge HTTP/SSE** on the LAN (or Tailscale). No always-on
+PC process is required for ops data.
 
-Python is the **host** language (probe, build, upload, serial, later
-clients). On-device code is **C++** because that is the only stack that
-turns on every peripheral without reinventing the HAL.
-
-## Decision (locked)
+## Decision (locked — reset)
 
 | Layer | Choice | Why |
 |-------|--------|-----|
-| On-device HAL | **M5Unified + M5GFX** (GitHub libraries) | `M5.begin()` brings up display, touch, IMU, RTC, speaker, mic, correct PMU (AXP192 vs AXP2101). CircuitPython only inits PMU + LCD. |
-| Build / flash | **PlatformIO CLI** + esptool | Not an M5 app. `board = m5stack-core2`, 16 MB partitions, PSRAM. |
-| Host tools | **Python 3** in `scripts/` | Probe COM port, wrap `pio run -t upload`, serial monitor. |
-| First app | **Bring-up dashboard** | Prove every onboard feature before product UI. |
+| On-device HAL | **M5Unified + M5GFX** | Display, touch, IMU, RTC, speaker, PMU |
+| JSON | **ArduinoJson 7** | Parse AF JSON / NDJSON-sized payloads |
+| Build / flash | **PlatformIO CLI** + esptool | `board = m5stack-core2` |
+| Network | **Device STA Wi-Fi → AF** | Brick is the AF client |
+| AF surface | AF public + authenticated APIs | `/health` `/ready` `/stats/*` + **fleet** alert stream (needs AF) |
+| Auth | Bearer on device (`secrets.h` / NVS) | No host key vault for the product path |
+| USB serial | Flash + debug logs only | **Not** the ops data bus |
 
-Out of scope for this pass: CircuitPython, Zephyr, Tactility, UiFlow,
-Linux, CoreS3 images, Wi-Fi/BLE product features, Grove accessories.
+### Explicitly rejected
 
-If the constraint later becomes “zero M5-authored *code*” (not just no M5
-*tools*), switch the HAL to `espressif/m5stack_core_2` and keep the same
-repo layout.
+- Host Python bridge that polls AF and pushes NDJSON over USB/LAN
+- “API keys stay on the PC; brick only talks to localhost bridge”
+- Building AgentForge features inside the Core2 repo
 
-## Hardware the bring-up must show
+## Product screens (unchanged intent)
 
-On this brick (rear board attached):
+1. **Status** — AF ready/down, version, invocations, error rate, cost, last agent
+2. **Issues** — 24h failure count + last five agents
+3. **Trend** — 7-day invocation / error sparklines
 
-1. Display ILI9342C 320×240
-2. Touch FT6336U + three virtual buttons (BtnA / BtnB / BtnC)
-3. AXP192: battery %, charging, power LED
-4. Vibration motor (`M5.Power.setVibration`)
-5. Speaker NS4168 (`M5.Speaker.tone`)
-6. PDM mic present (`M5.Mic.isEnabled`)
-7. IMU MPU6886 accel
-8. RTC BM8563
-9. microSD probe (`SD.begin` on CS G4; OK if no card)
-10. Grove 5 V boost (`cfg.output_power = true`)
-11. USB serial log at 115200
+BtnA ack alert, BtnB mute 15 min, BtnC cycle screens. Unacked alerts vibe + tone.
 
-BtnA = beep, BtnB = vibe pulse, BtnC = LED toggle.
-
-## Repo layout
+## Target device config
 
 ```text
-docs/firmware/PLAN.md     this document
-firmware/platformio.ini   PlatformIO env
-firmware/src/main.cpp     bring-up app
-scripts/core2_usb.py      read-only USB probe
-scripts/core2_dev.py      build / upload / monitor
-requirements.txt          esptool, pyserial, platformio
+firmware/src/secrets.h   (gitignored for Wi-Fi)
+  CORE2_WIFI_SSID / PASS
+  AF_BASE_URL            e.g. http://192.168.1.207:8010
+  AF_PROJECT_SLUG        core2
+  AF_API_KEY             afp_… project key (mint paste from AF host)
 ```
 
-Do not commit `.pio/`, `.tools/` dumps, or USB drivers.
+## AF API contract (Core2 consumer)
 
-## Flash path
+| Need | AF today (v4.60.0 / fec001e6) | Core2 action |
+|------|------------------------------|--------------|
+| Liveness / version | `GET /health`, `GET /ready` (public) | Use directly |
+| Auth self-check | `GET /projects/{slug}` + Bearer `afp_` | Required; `/health` is not enough |
+| Fleet stats | `GET /stats/summary`, `/dashboard`, `/failures` + Bearer | Use with project key on device |
+| Live fleet alerts | **Missing** — only `GET /projects/{slug}/events` + project key | **AF Linear issue** — do not build host SSE proxy |
+| Ack / mute | No AF standard desk-ack API | Optional AF issue or local-only mute |
+
+## Cleanup plan
+
+### Phase A — lock direction (this session)
+
+- [x] Hard rule `core2-af-direct.mdc`
+- [x] Rewrite this PLAN + PROTOCOL
+- [x] Linear Core2 + AgentForge Platform issues
+- [x] Stop running `af_bridge` processes
+- [x] Session handoff / memory note
+
+### Phase B — delete host middleware (Core2 code)
+
+- [x] Delete `scripts/af_bridge.py`
+- [x] Delete `scripts/af_protocol.py`
+- [x] Delete `tests/test_af_bridge.py`
+- [x] Remove README / INDEX / `.env.example` bridge knobs (`CORE2_BRIDGE_*`)
+- [x] Firmware polls AF (`af_client.cpp`), not `:8766/v1/state`
+- [x] Serial NDJSON ops path removed (debug drain only)
+- [x] TAP-7471–7474 commented; TAP-7484 canceled
+
+### Phase C — implement direct AF client (Core2 firmware)
+
+- [x] `secrets.h`: `AF_BASE_URL` + `AF_PROJECT_SLUG` + `AF_API_KEY` (`afp_`) + Wi-Fi
+- [x] HTTP client polls `/health`, `/ready`, `/projects/{slug}`, `/stats/*`
+- [x] Map JSON → UI state
+- [ ] SSE client when AF ships TAP-7503
+- [x] Local mute/ack; poll-alert stopgap (TAP-7502)
+
+### Phase D — operator polish (after C works)
+
+- NVS Wi-Fi + key setup screen, mute schedule, OTA
+
+## Flash (during transition)
 
 1. `pip install -r requirements.txt`
-2. `python scripts/core2_usb.py` — confirm COM4 / ESP32-D0WDQ6-V3
-3. `python scripts/core2_dev.py upload --port COM4`
-4. Device resets into the dashboard; `python scripts/core2_dev.py monitor`
+2. `python scripts/core2_dev.py upload --port COM4`
+3. Do **not** start `af_bridge` for product use
 
-PlatformIO uses DTR/RTS auto-reset. If connect fails: tap RST while
-“Connecting…”, or `--baud 115200`.
+## Linear
 
-## Implementation order
-
-1. Write this plan (this file).
-2. Add `firmware/` PlatformIO project and bring-up `main.cpp`.
-3. Add `scripts/core2_dev.py` and ignore `.pio/`.
-4. Point README / KB at the plan and firmware tree.
-5. Install PlatformIO, compile, upload to COM4.
-6. Quality-check changed Python.
-
-## Later (not this pass)
-
-- Product UI on top of the same HAL
-- Optional serial/Wi-Fi RPC so host Python can drive `M5.*`
-- OTA / 16 MB filesystem once the dashboard is proven
-- CircuitPython only if a future app must be `code.py`
-
-## Risks
-
-| Risk | Mitigation |
-|------|------------|
-| WLED wiped | Expected; no backup unless we dump flash first |
-| Screen dark | Always `M5.begin()` before drawing |
-| SD init fights LCD SPI | Init SD after M5; treat missing card as OK |
-| Mic + speaker share G0 | Don’t record and play at the same time in bring-up |
-| Core2 v1.1/v1.3 | M5Unified auto-detects PMU/IMU; this unit is v1.0 |
+| ID | Project | Role |
+|----|---------|------|
+| TAP-7499 | Core2 | Epic: direct AF monitor |
+| TAP-7500 | Core2 | Delete host middleware |
+| TAP-7501 | Core2 | Firmware AF HTTP poll client |
+| TAP-7502 | Core2 | Poll-alert stopgap (blocked by TAP-7503) |
+| TAP-7503 | AgentForge Platform | Fleet monitor SSE |
+| TAP-7504 | AgentForge Platform | Docs: device keys (superseded for Core2 by afp_-only policy) |
+| TAP-7484 | Core2 | Canceled (obsolete bridge framing) |
+| TAP-7471–7474 | Core2 | Done historical; commented superseded |

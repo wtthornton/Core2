@@ -7,15 +7,16 @@
 This repo documents the M5Stack **Core2** IoT controller: 240 MHz dual-core
 Xtensa LX6, 16 MB flash, 8 MB PSRAM, 2.0" 320×240 ILI9342C capacitive
 touchscreen, 2.4 GHz Wi-Fi + Bluetooth 4.2, AXP192/AXP2101 PMU, and Grove /
-M-Bus expansion. It does **not** run Linux. This workspace’s custom app is
-PlatformIO + **M5Unified** (no M5Burner). Other images that run: UiFlow,
-ESP-IDF BSP, CircuitPython, Zephyr.
+M-Bus expansion. It does **not** run Linux. The custom app is PlatformIO +
+**M5Unified**: an AgentForge desk monitor where the **brick talks to AF
+directly** over Wi-Fi (no PC middleware). See docs/firmware/VISION.md.
 
 ## Start here
 
 - [docs/kb/overview.md](docs/kb/overview.md) — what it can do
-- [docs/firmware/PLAN.md](docs/firmware/PLAN.md) — custom M5Unified app
-- [docs/INDEX.md](docs/INDEX.md) — generated documentation map
+- [docs/firmware/VISION.md](docs/firmware/VISION.md) — locked HMI architecture
+- [docs/firmware/IMPLEMENTATION_PLAN.md](docs/firmware/IMPLEMENTATION_PLAN.md) — execution plan
+- [docs/INDEX.md](docs/INDEX.md) — documentation map
 - [docs/kb/sources.md](docs/kb/sources.md) — vendor URLs
 
 ## Knowledge base
