@@ -1,6 +1,6 @@
 ---
 name: linear-issue
-description: Create, lint, validate, or triage Linear issues for agents. Routes to nlt-linear-issues tools and Linear MCP by user intent. Use when creating, linting, validating, or triaging a Linear issue or epic.
+description: Create, lint, validate, or triage Linear issues for agents. Routes to docs-mcp Linear tools and the Linear plugin by user intent. Use when creating, linting, validating, or triaging a Linear issue or epic.
 mcp_tools:
   - docs_generate_story
   - docs_lint_linear_issue
@@ -15,8 +15,6 @@ mcp_tools:
 
 Work with Linear issues for AI-agent consumption. Infer intent from the user's prompt and act autonomously within scope. The user's original request is standing authorization for the full generator → validator → save chain — do NOT pause mid-flow to ask "should I create this?"
 
-Team/project for this repo: `TappsCodingAgents` / `Core2` (from `.tapps-mcp.yaml`).
-
 **Assignee — agent, not human (applies to every write below).** Resolve the agent user once per session via `linear_list_users`, picking the user whose `name`/`displayName`/`email` matches `agent`, `bot`, `tapps`, `claude`, or `agent_user` in `.tapps-mcp.yaml`. Cache the id. Pass `assignee="<agent-user-id-or-name>"` on every Linear write. If no agent user exists, leave `assignee` unset — never fall back to the OAuth user. Only override when the user explicitly names a person.
 
 **Create** a new issue (default when prompt describes a change/bug):
@@ -24,7 +22,7 @@ Team/project for this repo: `TappsCodingAgents` / `Core2` (from `.tapps-mcp.yaml
 1. Call `docs_generate_story` with the user's ask. Required args: `title` (<=80 chars, pattern `file.py: symptom`), `files` (comma-separated, each with `:LINE-RANGE`), `acceptance_criteria` (verifiable items).
 2. Default `audience="agent"` emits the 5-section Linear template (What/Where/Why/Acceptance/Refs) and round-trips through the validator.
 3. If the call returns `INPUT_INVALID`, refine the inputs per the error message and retry. Do NOT pass `audience="human"` unless the user asks for a product-review doc.
-4. Call Linear MCP's write tool with `assignee="<agent-user-id-or-name>"` and project `Core2`. Proceed without prompting the user.
+4. Call the Linear plugin's write tool with `assignee="<agent-user-id-or-name>"`. Proceed without prompting the user.
 5. After the write returns, call `tapps_linear_snapshot_invalidate(team=<team>, project=<project>)` to evict stale cached snapshots for that slice.
 
 **Lint** an existing issue (prompt like "lint TAP-686"):
@@ -47,7 +45,7 @@ Team/project for this repo: `TappsCodingAgents` / `Core2` (from `.tapps-mcp.yaml
 5. Apply label_proposals, parent_groupings, and metadata_gaps via Linear writes (each carrying `assignee="<agent-user-id-or-name>"` for any newly-owned items). No mid-flow user confirmation.
 6. After any write, call `tapps_linear_snapshot_invalidate(team=<team>, project=<project>)` to refresh the cache on next read.
 
-Rules (enforced by nlt-linear-issues tools):
+Rules (enforced by docs-mcp tools):
 
 - Title <=80 chars; no em-dash preambles.
 - Inline-code filenames (`AGENTS.md`), never `[AGENTS.md](AGENTS.md)` (Linear's autolinker mangles).

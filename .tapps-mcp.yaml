@@ -6,10 +6,27 @@ llm_engagement_level: medium
 mcp_bundle: full
 mcp_transport: http
 memory:
+  brain_http_url: http://127.0.0.1:8080
   brain_project_id: core2
   profile: document-builder
+  capture_prompt: >-
+    Store durable M5Stack Core2 hardware facts: SoC, display, PMU revision
+    (AXP192 vs AXP2101), IMU (MPU6886 vs BMI270), Wi-Fi/BLE, pinout, and
+    which OS/firmware images actually run. Do not mix CoreS3 into Core2
+    memories.
 memory_hooks:
   auto_capture:
     enabled: false
   auto_recall:
     enabled: true
+    max_results: 8
+    min_score: 0.3
+    recall_keys:
+      - core2-hardware-identity
+      - core2-display
+      - core2-wireless
+      - core2-software-os
+      - core2-variants
+      - core2-pinout
+      - core2-power
+      - core2-stacking-limits

@@ -39,3 +39,10 @@ Thumbs.db
 
 # MCP local overrides (keep the example committed)
 .mcp.json
+
+# Local flash tools / USB drivers (not for git)
+.tools/
+
+# PlatformIO
+.pio/
+firmware/.pio/

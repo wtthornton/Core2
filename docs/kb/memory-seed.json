@@ -1,0 +1,50 @@
+[
+  {
+    "key": "core2-hardware-identity",
+    "tier": "architectural",
+    "tags": ["core2", "hardware", "m5stack"],
+    "value": "M5Stack Core2 is an ESP32-D0WDQ6-V3 dual-core Xtensa LX6 @ 240 MHz (600 DMIPS) IoT brick: 520 KB SRAM, 16 MB flash, 8 MB quad PSRAM, 54 x 54 x 16.5 mm. SKU K010 family. Not CoreS3 (ESP32-S3)."
+  },
+  {
+    "key": "core2-display",
+    "tier": "architectural",
+    "tags": ["core2", "display"],
+    "value": "Core2 screen: 2.0 inch IPS 320x240 ILI9342C RGB565 SPI (G38/G23/G18/G5/G15). Touch FT6336U I2C 0x38 (G21/G22, INT G39). Three front dots are capacitive hot zones. Backlight/reset from AXP PMU, not ESP32 GPIOs. Full framebuffer ~154 KB belongs in PSRAM."
+  },
+  {
+    "key": "core2-wireless",
+    "tier": "architectural",
+    "tags": ["core2", "wifi", "bluetooth"],
+    "value": "Core2 radio is ESP32 2.4 GHz only with a 3D PCB antenna: 802.11 b/g/n Wi-Fi plus Bluetooth 4.2 BR/EDR and BLE. No 5 GHz, no BT5, no 802.15.4, no Ethernet PHY. ESP-NOW and ESP-MESH are software on this radio."
+  },
+  {
+    "key": "core2-power",
+    "tier": "architectural",
+    "tags": ["core2", "pmu", "battery"],
+    "value": "Core2 PMU is AXP192 (original and v1.3, green LED) or AXP2101+INA3221 (v1.1, blue LED). Battery 3.7 V, 390 mAh early then 500 mAh from 2023-10. USB 5 V @ 500 mA Type-C. Firmware must read PMU ID. Do not poke AXP192 registers on v1.1."
+  },
+  {
+    "key": "core2-software-os",
+    "tier": "architectural",
+    "tags": ["core2", "firmware", "os"],
+    "value": "Core2 does not run Linux. Official: UiFlow1/2 MicroPython, Arduino+M5Unified, PlatformIO m5stack-core2, ESP-IDF espressif/m5stack_core_2 BSP (AXP192 vs AXP2101). Also CircuitPython 10.x m5stack_core2, Zephyr m5stack_core2, TinyGo, community Tactility OS on FreeRTOS. Underlying RTOS is FreeRTOS except Zephyr/NuttX images."
+  },
+  {
+    "key": "core2-variants",
+    "tier": "architectural",
+    "tags": ["core2", "revisions"],
+    "value": "Core2 v1.0: AXP192, MPU6886, CP2104 or CH9102. v1.1: AXP2101+INA3221, MPU6886, CH9102, blue LED, RTC backup. v1.3: AXP192, BMI270 IMU, CH9102, green LED, MS412FE RTC cell. AWS kits add ATECC608 on M5GO Bottom2 plus 10x SK6812."
+  },
+  {
+    "key": "core2-pinout",
+    "tier": "architectural",
+    "tags": ["core2", "pinout"],
+    "value": "Internal I2C G21/G22: PMU 0x34, touch 0x38, RTC 0x51, IMU 0x68, v1.1 INA3221 0x40, AWS ATECC 0x35. Grove Port A G32/G33 I2C. Port B G26/G36, Port C G13/G14 on M-Bus/bottoms. LCD CS G5, SD CS G4, shared SPI G38/G23/G18. I2S G12/G0/G2/G34."
+  },
+  {
+    "key": "core2-stacking-limits",
+    "tier": "architectural",
+    "tags": ["core2", "expansion"],
+    "value": "Never stack Core2 with M5 Base-series bases: vibration motor collides. To stack modules, remove the stock battery/IMU/mic rear board. Use M5GO Bottom2 to keep battery+IMU+mic. Official microSD max 16 GB."
+  }
+]
