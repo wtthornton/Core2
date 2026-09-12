@@ -18,9 +18,14 @@ This repo is **Core2**. Read identity from `.tapps-mcp.yaml` and the git remote,
 
 ## Scope
 
-- Engineering issues, docs, and PRs for this repo go to Linear project **Core2**.
-- Do not file Core2 work in sibling Linear projects (TappsMCP Platform, ReportLab, NLT Ideas Scout, etc.).
+- Engineering **code** for this repo only. Do not patch AgentForge or other siblings.
+- Core2 Linear for Core2 implementation. Missing AF APIs → Linear **AgentForge Platform** (design only; do not build host middleware).
 - Sibling repos under `C:\code` are reference-only unless the user names them.
+
+## Vision (HARD)
+
+Core2 device talks **directly** to AgentForge. No PC bridge.
+Source of truth: `docs/firmware/VISION.md` (also `.cursor/rules/core2-af-direct.mdc`).
 
 ## Cursor layout
 

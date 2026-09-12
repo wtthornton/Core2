@@ -18,6 +18,9 @@ M5Stack **CoreS3** (ESP32-S3, different product).
 | [expansion.md](expansion.md) | Stacking rules, M5GO Bottom2, related SKUs |
 | [sources.md](sources.md) | Primary sources used to build this KB |
 
-Start at [overview.md](overview.md). Custom firmware plan:
-[docs/firmware/PLAN.md](../firmware/PLAN.md). The generated project index is
-[docs/INDEX.md](../INDEX.md). Machine-readable summary: [llms.txt](../../llms.txt).
+Start at [overview.md](overview.md). AgentForge desk monitor (brick → AF direct):
+[docs/firmware/VISION.md](../firmware/VISION.md),
+[IMPLEMENTATION_PLAN.md](../firmware/IMPLEMENTATION_PLAN.md),
+[PLAN.md](../firmware/PLAN.md), [PROTOCOL.md](../firmware/PROTOCOL.md).
+The generated project index is [docs/INDEX.md](../INDEX.md). Machine-readable
+summary: [llms.txt](../../llms.txt).

@@ -1,0 +1,35 @@
+# TappsMCP Memory Auto-Recall (Epic 65.4)
+# Injects relevant memories before agent prompt. Runs on PreCompact, SessionStart.
+# Graceful fallback: no MemoryStore, MCP unavailable, empty results — exit 0.
+$rawInput = @($input) -join "`n"
+$defaultQuery = "project context architecture"
+$query = $defaultQuery
+try {
+    $data = $rawInput | ConvertFrom-Json
+    $query = if ($data.prompt) { $data.prompt }
+             elseif ($data.last_user_message) { $data.last_user_message }
+             elseif ($data.last_message) { $data.last_message }
+             elseif ($data.context) { $data.context }
+             else { $defaultQuery }
+    if ($data.messages -and $data.messages.Count -gt 0) {
+        $last = $data.messages[-1]
+        $c = if ($last.content) { $last.content } elseif ($last.text) { $last.text } else { "" }
+        if ($c) { $query = $c }
+    }
+    $query = ($query -as [string] -or "").Substring(0, [Math]::Min(500, ($query -as [string]).Length))
+} catch {}
+if ($query -ne $defaultQuery -and $query.Length -lt 50) {
+    exit 0
+}
+$projDir = $env:CLAUDE_PROJECT_DIR
+if (-not $projDir) { $projDir = "." }
+$tapps = Get-Command tapps-mcp -ErrorAction SilentlyContinue
+if (-not $tapps) {
+    exit 0
+}
+try {
+    $out = & tapps-mcp memory recall --query "$query" --project-root $projDir `
+        --max-results 8 --min-score 0.3 --recall-key core2-hardware-identity --recall-key core2-display --recall-key core2-wireless --recall-key core2-software-os --recall-key core2-variants --recall-key core2-pinout --recall-key core2-power --recall-key core2-stacking-limits 2>$null
+    if ($out) { Write-Output $out }
+} catch {}
+exit 0

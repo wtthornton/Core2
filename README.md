@@ -12,7 +12,11 @@ work.
 
 Host probe (Windows, after CP210x or CH9102 VCP driver): `pip install -r requirements.txt` then `python scripts/core2_usb.py`.
 
-Custom firmware plan: [docs/firmware/PLAN.md](docs/firmware/PLAN.md). Bring-up app lives in `firmware/`; build/flash with `python scripts/core2_dev.py upload --port COM4`.
+AgentForge desk monitor (**brick → AF direct**, no PC bridge):
+[docs/firmware/VISION.md](docs/firmware/VISION.md).
+Plan / cleanup: [docs/firmware/PLAN.md](docs/firmware/PLAN.md).
+AF API usage: [docs/firmware/PROTOCOL.md](docs/firmware/PROTOCOL.md).
+Build/flash: `python scripts/core2_dev.py upload --port COM4`.
 
 ## Cursor
 
