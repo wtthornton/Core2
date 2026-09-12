@@ -24,7 +24,7 @@ PC process is required for ops data.
 | JSON | **ArduinoJson 7** | Parse AF JSON / NDJSON-sized payloads |
 | Build / flash | **PlatformIO CLI** + esptool | `board = m5stack-core2` |
 | Network | **Device STA Wi-Fi → AF** | Brick is the AF client |
-| AF surface | AF public + authenticated APIs | `/health` `/ready` `/stats/*` + **fleet** alert stream (needs AF) |
+| AF surface | Project `afp_` routes + public health | `/projects/{slug}/stats`, `activity-series`, …; fleet `/stats/*` needs `af_` (not on device) |
 | Auth | Bearer on device (`secrets.h` / NVS) | No host key vault for the product path |
 | USB serial | Flash + debug logs only | **Not** the ops data bus |
 
@@ -34,13 +34,19 @@ PC process is required for ops data.
 - “API keys stay on the PC; brick only talks to localhost bridge”
 - Building AgentForge features inside the Core2 repo
 
-## Product screens (unchanged intent)
+## Product screens (ops-cube HMI)
 
-1. **Status** — AF ready/down, version, invocations, error rate, cost, last agent
-2. **Issues** — 24h failure count + last five agents
-3. **Trend** — 7-day invocation / error sparklines
+Display: **320×240** ILI9342C. Top face strip is **46 px** (touch-sized tabs);
+bottom soft keys **40 px**.
 
-BtnA ack alert, BtnB mute 15 min, BtnC cycle screens. Unacked alerts vibe + tone.
+1. **Hub** — status orb, isometric cube, INV/ERR/USD tiles
+2. **Pulse** — invocations + bar chart
+3. **Heat** — error count + recent rows
+4. **Trail** — 7-day activity charts
+5. **Beam** — AF URL / slug / auth
+
+Nav: tap face chips, swipe, or soft keys **Prev / Quiet / Next** (BtnA/B/C).
+Unacked alerts vibe + tone.
 
 ## Target device config
 
@@ -86,10 +92,11 @@ firmware/src/secrets.h   (gitignored for Wi-Fi)
 ### Phase C — implement direct AF client (Core2 firmware)
 
 - [x] `secrets.h`: `AF_BASE_URL` + `AF_PROJECT_SLUG` + `AF_API_KEY` (`afp_`) + Wi-Fi
-- [x] HTTP client polls `/health`, `/ready`, `/projects/{slug}`, `/stats/*`
-- [x] Map JSON → UI state
-- [ ] SSE client when AF ships TAP-7503
+- [x] HTTP client polls `/health`, `/ready`, `/projects/{slug}` + project stats/series
+- [x] Map JSON → ops-cube UI (Hub/Pulse/Heat/Trail/Beam)
+- [ ] SSE client when AF ships TAP-7503 (optional interim: `/projects/{slug}/events`)
 - [x] Local mute/ack; poll-alert stopgap (TAP-7502)
+- [x] Touch-sized top face strip (46 px on 320×240)
 
 ### Phase D — operator polish (after C works)
 

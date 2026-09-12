@@ -13,9 +13,9 @@ A desk-side HMI that runs **on Core2 firmware** (C++ / M5Unified):
 1. **Hub** — live orb + isometric cube + metric tiles  
 2. **Pulse / Heat / Trail / Beam** — cube faces (invokes, failures, 7-day charts, link)  
 
-Nav: top face chips, swipe, or **Prev / Quiet / Next** (BtnA/B/C). Not a CLI.
+Nav: top face chips (**46 px** tall on 320×240), swipe, or **Prev / Quiet / Next** (BtnA/B/C). Not a CLI.
 
-The brick joins Wi‑Fi, calls AgentForge over HTTP (and SSE when AF provides it), and renders the result. USB is for **flash and debug logs only**.
+The brick joins Wi‑Fi, calls AgentForge over HTTP using **project-scoped `afp_` routes** (`/projects/{slug}/…`). Fleet `/stats/*` is out of scope for the device key. USB is for **flash and debug logs only**.
 
 ## What we are not building
 
@@ -70,6 +70,6 @@ Not this (rejected):
 
 1. Power the brick on the desk (Wi‑Fi configured).  
 2. No `af_bridge.py` (or similar) running on a PC.  
-3. Status shows live AF version / ready / stats from `AF_BASE_URL` (auth via `afp_`).  
+3. Hub shows Live + version + project stats from `AF_BASE_URL` (auth via `afp_`).  
 4. Alerts come from AF’s API surface (fleet stream when AF ships it).  
 5. Gaps are tracked as **AgentForge Platform** Linear issues, not new Core2 middleware.

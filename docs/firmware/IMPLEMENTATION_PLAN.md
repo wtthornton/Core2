@@ -139,11 +139,11 @@ Link AF issues from Core2 epic as blockers.
 
 ```text
 firmware/src/
-  config.h / secrets.h     AF_BASE_URL, AF_PROJECT_SLUG, AF_API_KEY (afp_), WIFI_*
-  af_client.h/.cpp         HTTP GET health/ready/projects/stats + optional SSE
+  config.h / secrets.h     CORE2_FW_VERSION, AF_BASE_URL, AF_PROJECT_SLUG, AF_API_KEY (afp_), WIFI_*
+  af_client.h/.cpp         HTTP GET health/ready + /projects/{slug}/… (not fleet /stats/*)
   protocol.h/.cpp          AppState + UI mapping only (no host NDJSON)
   net.h/.cpp               Wi-Fi STA + call af_client
-  ui.*                     keep screens (Status/Issues/Trend)
+  ui.*                     ops-cube faces Hub/Pulse/Heat/Trail/Beam (320×240)
   main.cpp                 buttons, haptic, loop
 ```
 
@@ -154,12 +154,13 @@ Every N seconds (e.g. 5s):
 1. `GET {AF_BASE_URL}/health` → reachable, version, degraded  
 2. `GET {AF_BASE_URL}/ready` → ready  
 3. `GET {AF_BASE_URL}/projects/{slug}` + Bearer `afp_` → auth ok  
-4. `GET {AF_BASE_URL}/stats/summary` + Bearer → inv, err, cost, agent  
-5. `GET {AF_BASE_URL}/stats/dashboard?days=7` → series  
-6. `GET {AF_BASE_URL}/stats/failures?limit=5` → issues  
+4. `GET {AF_BASE_URL}/projects/{slug}/stats` → inv, err, cost, agent  
+5. `GET {AF_BASE_URL}/projects/{slug}/activity-series?days=7` → Trail series  
+6. `GET {AF_BASE_URL}/projects/{slug}/dual-meters` + `invocations?limit=5` → Heat  
 
 Map into existing `SnapState` / `FailState` / `SeriesState`.  
-On 401: Status shows auth error (honest), not fake zeros.
+On 401: Hub shows Need key (honest), not fake zeros.  
+Do **not** call fleet `/stats/*` with `afp_` (403).
 
 ### 4.3 Alerts (blocked on AF)
 
