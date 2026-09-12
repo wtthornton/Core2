@@ -65,9 +65,11 @@ void net_poll() {
     }
     return;
   }
-  if (millis() - g_last_poll_ms < kPollMs) {
+  if (millis() - g_last_poll_ms < kPollMs && !af_client_busy()) {
     return;
   }
-  g_last_poll_ms = millis();
+  if (!af_client_busy()) {
+    g_last_poll_ms = millis();
+  }
   af_client_poll();
 }

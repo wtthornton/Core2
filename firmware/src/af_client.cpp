@@ -12,9 +12,12 @@
 
 namespace {
 
-constexpr uint32_t kHttpTimeoutMs = 4000;
+constexpr uint32_t kHttpTimeoutMs = 1800;
 constexpr size_t kBodyMax = 4096;
 int32_t g_prev_errors = -1;
+uint8_t g_poll_step = 0;
+String g_meters_body;
+int g_meters_code = 0;
 
 String join_url(const char* base, const char* path) {
   String url = base;
@@ -255,42 +258,63 @@ void af_client_poll() {
     s.age_s = -1;
     protocol_copy_trunc(s.link, sizeof(s.link), "wifi");
     app_state().dirty = true;
+    g_poll_step = 0;
     return;
   }
 
-  String body;
-  const int health_code = http_get("/health", body);
-  String ready_body;
-  const int ready_code = http_get("/ready", ready_body);
-  apply_health_ready(body, health_code, ready_code);
-
+  // One HTTP request per loop tick so touch/UI stay responsive.
   const NetCfg& n = app_state().net;
-  if (n.project_slug[0] == 0) {
-    return;
-  }
-
   char path[96];
-  snprintf(path, sizeof(path), "/projects/%s", n.project_slug);
-  String proj_body;
-  apply_project_auth(http_get(path, proj_body));
-  if (!app_state().snap.auth_ok) {
-    return;
+  String body;
+
+  switch (g_poll_step) {
+    case 0: {
+      const int health_code = http_get("/health", body);
+      String ready_body;
+      const int ready_code = http_get("/ready", ready_body);
+      apply_health_ready(body, health_code, ready_code);
+      g_poll_step = 1;
+      break;
+    }
+    case 1: {
+      if (n.project_slug[0] == 0) {
+        g_poll_step = 0;
+        break;
+      }
+      snprintf(path, sizeof(path), "/projects/%s", n.project_slug);
+      apply_project_auth(http_get(path, body));
+      g_poll_step = app_state().snap.auth_ok ? 2 : 0;
+      break;
+    }
+    case 2: {
+      snprintf(path, sizeof(path), "/projects/%s/stats", n.project_slug);
+      apply_project_stats(body, http_get(path, body));
+      g_poll_step = 3;
+      break;
+    }
+    case 3: {
+      snprintf(path, sizeof(path), "/projects/%s/activity-series?days=7", n.project_slug);
+      apply_activity_series(body, http_get(path, body));
+      g_poll_step = 4;
+      break;
+    }
+    case 4: {
+      snprintf(path, sizeof(path), "/projects/%s/dual-meters", n.project_slug);
+      g_meters_code = http_get(path, g_meters_body);
+      g_poll_step = 5;
+      break;
+    }
+    case 5: {
+      snprintf(path, sizeof(path), "/projects/%s/invocations?limit=5", n.project_slug);
+      const int inv_code = http_get(path, body);
+      apply_heat(g_meters_body, g_meters_code, body, inv_code);
+      g_poll_step = 0;
+      break;
+    }
+    default:
+      g_poll_step = 0;
+      break;
   }
-
-  snprintf(path, sizeof(path), "/projects/%s/stats", n.project_slug);
-  String stats_body;
-  apply_project_stats(stats_body, http_get(path, stats_body));
-
-  snprintf(path, sizeof(path), "/projects/%s/activity-series?days=7", n.project_slug);
-  String series_body;
-  apply_activity_series(series_body, http_get(path, series_body));
-
-  snprintf(path, sizeof(path), "/projects/%s/dual-meters", n.project_slug);
-  String meters_body;
-  const int meters_code = http_get(path, meters_body);
-
-  snprintf(path, sizeof(path), "/projects/%s/invocations?limit=5", n.project_slug);
-  String inv_body;
-  const int inv_code = http_get(path, inv_body);
-  apply_heat(meters_body, meters_code, inv_body, inv_code);
 }
+
+bool af_client_busy() { return g_poll_step != 0; }
