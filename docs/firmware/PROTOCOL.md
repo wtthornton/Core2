@@ -51,7 +51,7 @@ alert. Real fleet SSE waits on **TAP-7503**.
 ## Buttons / faces
 
 Ops-cube on **320×240**: Hub · Pulse · Heat · Trail · Beam.
-Top face strip **46 px** (large touch tabs, text size 2). Soft keys **40 px**:
+Top face strip **46 px** (large touch tabs, compact labels). Soft keys **40 px**:
 Prev / Quiet / Next. Swipe or tap chips. BtnA/B/C map to the same.
 
 ## Deleted

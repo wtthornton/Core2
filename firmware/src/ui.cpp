@@ -237,11 +237,10 @@ void draw_face_strip(M5Canvas& c, Screen screen, int w) {
     }
     c.setTextDatum(middle_center);
     c.setTextColor(on ? kWhite : kInk, on ? kTeal : kPanel);
-    c.setTextSize(2);
+    c.setTextSize(1);
     c.drawString(kFaceName[i], x + tw / 2, y + tab_h / 2 - (on ? 1 : 0));
   }
   c.setTextDatum(top_left);
-  c.setTextSize(1);
 }
 
 void draw_soft_keys(M5Canvas& c, int w, int h) {
