@@ -55,3 +55,4 @@ Pinned in `.tapps-mcp.yaml` `memory_hooks.auto_recall.recall_keys`:
 - `core2-pinout`
 - `core2-power`
 - `core2-stacking-limits`
+- `core2-af-direct-vision`

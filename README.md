@@ -14,9 +14,10 @@ Host probe (Windows, after CP210x or CH9102 VCP driver): `pip install -r require
 
 AgentForge desk monitor (**brick → AF direct**, no PC bridge):
 [docs/firmware/VISION.md](docs/firmware/VISION.md).
+Ops-cube HMI faces: Hub / Pulse / Heat / Trail / Beam (320×240 touch UI).
 Plan / cleanup: [docs/firmware/PLAN.md](docs/firmware/PLAN.md).
-AF API usage: [docs/firmware/PROTOCOL.md](docs/firmware/PROTOCOL.md).
-Build/flash: `python scripts/core2_dev.py upload --port COM4`.
+AF API usage (project `afp_` routes): [docs/firmware/PROTOCOL.md](docs/firmware/PROTOCOL.md).
+Firmware tag: **0.2.0** (direct AF + ops-cube). Build/flash: `python scripts/core2_dev.py upload --port COM4`.
 
 ## Cursor
 
