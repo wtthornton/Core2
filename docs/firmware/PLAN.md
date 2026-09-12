@@ -58,7 +58,8 @@ firmware/src/secrets.h   (gitignored for Wi-Fi)
 |------|------------------------------|--------------|
 | Liveness / version | `GET /health`, `GET /ready` (public) | Use directly |
 | Auth self-check | `GET /projects/{slug}` + Bearer `afp_` | Required; `/health` is not enough |
-| Fleet stats | `GET /stats/summary`, `/dashboard`, `/failures` + Bearer | Use with project key on device |
+| Fleet stats | `GET /stats/*` needs platform `af_` | **Do not use with afp_** |
+| Project stats | `GET /projects/{slug}/stats`, `activity-series`, `dual-meters` + `afp_` | **Firmware uses these** |
 | Live fleet alerts | **Missing** — only `GET /projects/{slug}/events` + project key | **AF Linear issue** — do not build host SSE proxy |
 | Ack / mute | No AF standard desk-ack API | Optional AF issue or local-only mute |
 
