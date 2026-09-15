@@ -45,6 +45,20 @@ currents are measured at the USB input in M5’s table, not a remaining-mAh
 register. Zephyr still marks “query current battery status” as incomplete
 on the stock board support.
 
+Hub power copy uses AXP via M5Unified (`isCharging`, `getVBUSVoltage`,
+`getBatteryVoltage`, coarse `getBatteryLevel`). Labels are `USB`, `chg N%`,
+or `N%` on pack. Missing/unknown pack is `--`, not a fake `0%`. This is not
+a coulomb counter.
+
+On battery, after **45 s** with no touch, keys, Talk, or new alert, firmware
+dims the backlight and may drop the CPU to **80 MHz**. USB (VBUS) stays at
+desk brightness and 240 MHz. Wi-Fi stays up — no `esp_deep_sleep` / ULP.
+
+Quiet hours (`cfg quiet 2200 0700`) mute haptics and status speech after NTP
+locks (Pacific `CORE2_TZ`). Soft-key Quiet is still a 15-minute mute. HTTP
+OTA is unsigned LAN `cfg ota http://host/firmware.bin` (app0/app1 slots). USB
+flash is the recovery path. There is no auto-OTA.
+
 ### USB charge currents (original / v1.3 AXP192 docs)
 
 | Condition | Current |

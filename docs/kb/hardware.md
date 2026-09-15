@@ -21,7 +21,21 @@ revisions differ, the table says so. See [variants.md](variants.md).
 The SoC also contains peripherals that are **not all brought out** as
 user-friendly Core2 features: 12-bit ADC, 8-bit DAC, TWAI (CAN 2.0), Ethernet
 MAC (no PHY on this board), RMT, LEDC PWM, MCPWM, PCNT, SDMMC host, 3× UART,
-2× I2C, 2× I2S, 4× SPI.
+2× I2C, 2× I2S, 4× SPI. SPI and I2S already use DMA via M5GFX / `M5.Speaker` /
+`M5.Mic` — do not rewrite a DMA engine.
+
+**Do not ship these ESP32 maker tricks on Core2** (VISION + locked pinout):
+
+| Feature | Why not |
+|---------|---------|
+| GPIO-matrix remap of Core2 buses | I2S is G0/G12/G2 (G0 is also a boot strap). Internal I2C is G21/G22 (AXP, touch, RTC). |
+| ESP32 capacitive touch pads | UI is FT6336 on the glass plus A/B/C keys, not GPIO touch. |
+| Wi-Fi promiscuous / sniffer | Product path is STA client to AgentForge, not a radio analyzer. |
+| Internal Hall “lid” sensor | Noisy, chip-variant; not a cover detector. |
+| AM radio / DAC “transmitter” | Regulated extra radio. Speaker is NS4168 I2S, not DAC GPIO25. |
+| ULP coprocessor + deep sleep | Drops Wi-Fi and AF SSE. Desk HMI stays associated. Idle dim + 80 MHz on pack is the power policy (`pwr.cpp`). |
+
+Die temperature (`temperatureRead()`, Beam `die NN C`) is the ESP32 **junction**, not room air. Firmware Serial-logs when it crosses **70 C** and clears the warn below **65 C**.
 
 ## Memory map (practical)
 
@@ -47,6 +61,17 @@ capacitive **FT6336U**, AXP-controlled backlight/reset.
 AXP GPIO enables the speaker (`SPK_EN`). M5GO Bottom2 historically used
 SPM1423; 2025-09 docs list **LMD4737** for that base’s mic.
 
+Firmware Talk face records hold-to-talk into PSRAM (16 kHz mono PCM/WAV, ~6 s).
+I2S is shared: `Speaker.end()` then `Mic.begin()` (no duplex). If PSRAM alloc
+fails, optional spill to `/talk.wav` on microSD (CS **G4**). Missing rear board
+or `Mic.begin()` failure shows **mic missing**, not a hang. Playback of AF TTS
+is record-then-play on the same I2S port.
+
+Device **status** speech (e.g. “blocked, no AF voice API”) is a canned WAV via
+`M5.Speaker.playWav`, not on-device TTS and not a cloud TTS key. Jarvis replies
+wait on AF TAP-7554. Quiet / `protocol_muted()` stops cues the same way it
+stops haptics. Do not use PicoTTS / Talkie-on-DAC / VoiceText from the brick.
+
 ## Motion and haptics
 
 | Part | Role | Where |
@@ -58,6 +83,11 @@ SPM1423; 2025-09 docs list **LMD4737** for that base’s mic.
 IMU and microphone live on the **rear expansion board**, not the display PCB.
 Removing that board (required to stack many M5 modules) removes IMU, mic, and
 the pack battery unless you use M5GO Bottom2.
+
+Firmware does **not** poll the IMU (`internal_imu = false`). A flexed rear
+pogo on 0x68 can stall the shared G21/G22 I2C bus (AXP + touch) when the brick
+is moved. Talk PTT is the Talk key / BtnB only — a palm on the glass while
+picking it up used to start `Mic.begin()` on I2S G0 and hang the panel.
 
 ## Timekeeping
 

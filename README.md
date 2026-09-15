@@ -9,15 +9,16 @@ work.
 - USB flash / load firmware: [docs/kb/usb-flash.md](docs/kb/usb-flash.md)
 - Doc index: [docs/INDEX.md](docs/INDEX.md)
 - Agent summary: [llms.txt](llms.txt)
+- Workforce catalog identity: [agents/core2-desk/](agents/core2-desk/) (Vol 2 briefs via `CORE2_ROOT`)
 
 Host probe (Windows, after CP210x or CH9102 VCP driver): `pip install -r requirements.txt` then `python scripts/core2_usb.py`.
 
 AgentForge desk monitor (**brick → AF direct**, no PC bridge):
 [docs/firmware/VISION.md](docs/firmware/VISION.md).
-Ops-cube HMI faces: Hub / Pulse / Heat / Trail / Beam (320×240 touch UI).
+Ops-cube HMI faces: Hub / Pulse / Heat / Trail / Beam / Talk (320×240 touch UI).
 Plan / cleanup: [docs/firmware/PLAN.md](docs/firmware/PLAN.md).
 AF API usage (project `afp_` routes): [docs/firmware/PROTOCOL.md](docs/firmware/PROTOCOL.md).
-Firmware tag: **0.2.0** (direct AF + ops-cube). Build/flash: `python scripts/core2_dev.py upload --port COM4`.
+Firmware tag: **0.3.5** (serial before M5, NVS quiet boot, prefix-only key mask, PIO CI). Build/flash: `python scripts/core2_dev.py upload --port COM4`.
 
 ## Cursor
 

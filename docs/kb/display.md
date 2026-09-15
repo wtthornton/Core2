@@ -72,6 +72,19 @@ not a phone-class 10-point panel.
 A full-screen RGB565 buffer is 320×240×2 = **153,600 bytes**. That belongs in
 **PSRAM**, not internal SRAM.
 
+## Desk type scale (firmware UI)
+
+Panel is **200 PPI**. Default M5GFX GLCD: size 1 = 6×8 px (~1 mm, captions
+only), size 2 = 12×16 (body), size 3 = 18×24 (hero numbers).
+
+Keep face strip **46 px** and soft keys **40 px** (finger-size). Content band
+is **146 px**. Six tabs are ~**49 px** wide, so size-2 words `Pulse` / `Trail`
+do not fit.
+
+Use size 2 for Talk transcript/reply, Heat rows, Beam URL, Hub agent, and the
+Quiet/Talk key. Selected tab size 2; unselected tabs size 1. Do not shrink
+chrome, do not load TTF, do not add a second tab row.
+
 ## What Core2 is not (display)
 
 - Not CoreS3’s glass cover / same mechanical stack (panel IC is the same

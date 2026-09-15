@@ -6,7 +6,12 @@
 
 // Desk HMI firmware revision (docs / Linear / flash notes).
 #ifndef CORE2_FW_VERSION
-#define CORE2_FW_VERSION "0.2.0"
+#define CORE2_FW_VERSION "0.3.5"
+#endif
+
+// POSIX TZ for NTP + quiet hours (desk is Pacific).
+#ifndef CORE2_TZ
+#define CORE2_TZ "PST8PDT,M3.2.0/2,M11.1.0/2"
 #endif
 
 #ifndef CORE2_WIFI_SSID

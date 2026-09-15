@@ -1,0 +1,31 @@
+# Compile Core2 firmware (PlatformIO). No secrets.h required — empty defaults.
+
+name: firmware
+
+on:
+  pull_request:
+    paths:
+      - "firmware/**"
+      - ".github/workflows/firmware.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "firmware/**"
+      - ".github/workflows/firmware.yml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: firmware
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PlatformIO
+        run: pip install platformio
+      - name: Build m5stack-core2
+        run: pio run

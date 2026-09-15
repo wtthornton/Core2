@@ -44,6 +44,7 @@ bottom soft keys **40 px**.
 3. **Heat** — error count + recent rows
 4. **Trail** — 7-day activity charts
 5. **Beam** — AF URL / slug / auth
+6. **Talk** — PTT Jarvis (blocked/no-API until TAP-7550)
 
 Nav: tap face chips, swipe, or soft keys **Prev / Quiet / Next** (BtnA/B/C).
 Unacked alerts vibe + tone.
@@ -94,13 +95,15 @@ firmware/src/secrets.h   (gitignored for Wi-Fi)
 - [x] `secrets.h`: `AF_BASE_URL` + `AF_PROJECT_SLUG` + `AF_API_KEY` (`afp_`) + Wi-Fi
 - [x] HTTP client polls `/health`, `/ready`, `/projects/{slug}` + project stats/series
 - [x] Map JSON → ops-cube UI (Hub/Pulse/Heat/Trail/Beam)
-- [ ] SSE client when AF ships TAP-7503 (optional interim: `/projects/{slug}/events`)
+- [x] Project SSE client: `/projects/{slug}/events` (fleet still TAP-7503)
 - [x] Local mute/ack; poll-alert stopgap (TAP-7502)
 - [x] Touch-sized top face strip (46 px on 320×240)
 
 ### Phase D — operator polish (after C works)
 
-- NVS Wi-Fi + key setup screen, mute schedule, OTA
+- [x] NVS Wi-Fi + key setup screen (Beam tap; `cfg` serial)
+- [x] Mute schedule (`cfg quiet 2200 0700`, NTP, Hub `quiet hours`)
+- [x] HTTP OTA (`cfg ota http://…/firmware.bin`)
 
 ## Flash (during transition)
 
@@ -116,7 +119,9 @@ firmware/src/secrets.h   (gitignored for Wi-Fi)
 | TAP-7500 | Core2 | Delete host middleware |
 | TAP-7501 | Core2 | Firmware AF HTTP poll client |
 | TAP-7502 | Core2 | Poll-alert stopgap (blocked by TAP-7503) |
-| TAP-7503 | AgentForge Platform | Fleet monitor SSE |
+| TAP-7537 | Core2 | NVS Wi-Fi + afp_ setup (Phase D) |
+| TAP-7538 | Core2 | Project SSE `/projects/{slug}/events` |
+| TAP-7503 | AgentForge Platform | Fleet monitor SSE — **do not** put `af_` on the brick; Core2 stays project-scoped until AF redesigns this |
 | TAP-7504 | AgentForge Platform | Docs: device keys (superseded for Core2 by afp_-only policy) |
 | TAP-7484 | Core2 | Canceled (obsolete bridge framing) |
 | TAP-7471–7474 | Core2 | Done historical; commented superseded |

@@ -34,6 +34,7 @@ def main() -> int:
         return pio("run")
     if ns.command == "upload":
         return pio("run", "-t", "upload", "--upload-port", ns.port)
+    # DTR/RTS off so opening the monitor does not reset the brick (platformio.ini).
     return pio("device", "monitor", "--port", ns.port, "--baud", "115200")
 
 

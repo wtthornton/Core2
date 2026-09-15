@@ -12,8 +12,11 @@ A desk-side HMI that runs **on Core2 firmware** (C++ / M5Unified):
 
 1. **Hub** — live orb + isometric cube + metric tiles  
 2. **Pulse / Heat / Trail / Beam** — cube faces (invokes, failures, 7-day charts, link)  
+3. **Talk** — hold-to-talk Jarvis face: listening / thinking / transcript / reply  
 
 Nav: top face chips (**46 px** tall on 320×240), swipe, or **Prev / Quiet / Next** (BtnA/B/C). Not a CLI.
+
+The Talk face captures PTT audio on the brick and POSTs it to AgentForge (`POST /projects/{slug}/voice/turns` with `afp_`). AF owns STT/TTS. Until that API ships (TAP-7548 / TAP-7550), Talk shows an honest **blocked / no API** state — not a fake local assistant and not a PC speech proxy.
 
 The brick joins Wi‑Fi, calls AgentForge over HTTP using **project-scoped `afp_` routes** (`/projects/{slug}/…`). Fleet `/stats/*` is out of scope for the device key. USB is for **flash and debug logs only**.
 
@@ -71,5 +74,6 @@ Not this (rejected):
 1. Power the brick on the desk (Wi‑Fi configured).  
 2. No `af_bridge.py` (or similar) running on a PC.  
 3. Hub shows Live + version + project stats from `AF_BASE_URL` (auth via `afp_`).  
-4. Alerts come from AF’s API surface (fleet stream when AF ships it).  
-5. Gaps are tracked as **AgentForge Platform** Linear issues, not new Core2 middleware.
+4. Alerts come from project SSE (`/projects/{slug}/events`) plus the poll-alert stopgap. Fleet-wide SSE waits on TAP-7503 **without** putting a platform `af_` key on the device. Until that contract exists, the brick stays a **project `core2` monitor**.  
+5. Gaps are tracked as **AgentForge Platform** Linear issues, not new Core2 middleware.  
+6. Talk: PTT upload → AF voice-turn → transcript + reply on screen once TAP-7550 exists; until then, blocked/no-API copy. Device key stays `afp_` (no `ws_auth_token`).

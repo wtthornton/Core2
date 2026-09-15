@@ -1,8 +1,11 @@
 #include "net.h"
 
 #include <WiFi.h>
+#include <cstdlib>
+#include <time.h>
 
 #include "af_client.h"
+#include "af_sse.h"
 #include "protocol.h"
 
 namespace {
@@ -10,6 +13,7 @@ namespace {
 uint32_t g_last_poll_ms = 0;
 uint32_t g_last_wifi_try_ms = 0;
 bool g_wifi_started = false;
+bool g_ntp_started = false;
 
 constexpr uint32_t kPollMs = 5000;
 constexpr uint32_t kWifiRetryMs = 15000;
@@ -25,15 +29,35 @@ void wifi_start() {
   g_last_wifi_try_ms = millis();
 }
 
+void maybe_ntp() {
+  if (g_ntp_started || WiFi.status() != WL_CONNECTED) {
+    return;
+  }
+  g_ntp_started = true;
+  setenv("TZ", CORE2_TZ, 1);
+  tzset();
+  configTime(0, 0, "pool.ntp.org", "time.google.com");
+  Serial.println(F("ntp start"));
+}
+
 }  // namespace
 
 void net_begin() { wifi_start(); }
+
+void net_reconnect() {
+  WiFi.disconnect(true, true);
+  delay(50);
+  g_wifi_started = false;
+  g_ntp_started = false;
+  af_sse_reset();
+  wifi_start();
+}
 
 void net_poll() {
   AppState& st = app_state();
   if (st.net.dirty) {
     st.net.dirty = false;
-    wifi_start();
+    net_reconnect();
   }
   if (!g_wifi_started && st.net.ssid[0] != 0) {
     wifi_start();
@@ -64,6 +88,14 @@ void net_poll() {
       wifi_start();
     }
     return;
+  }
+  maybe_ntp();
+  if (protocol_time_ok()) {
+    static bool ntp_ok = false;
+    if (!ntp_ok) {
+      ntp_ok = true;
+      Serial.println(F("ntp ok"));
+    }
   }
   if (millis() - g_last_poll_ms < kPollMs && !af_client_busy()) {
     return;

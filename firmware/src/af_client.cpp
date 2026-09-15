@@ -4,6 +4,7 @@
 #include <HTTPClient.h>
 #include <WiFi.h>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <ctime>
 #include <time.h>
@@ -61,7 +62,7 @@ void ago_label(const char* ts, char* out, size_t out_len) {
   }
   out[0] = '?';
   out[1] = 0;
-  if (ts == nullptr || ts[0] == 0) {
+  if (ts == nullptr || ts[0] == 0 || !protocol_time_ok()) {
     return;
   }
   struct tm tmv = {};
@@ -71,8 +72,13 @@ void ago_label(const char* ts, char* out, size_t out_len) {
   }
   tmv.tm_year -= 1900;
   tmv.tm_mon -= 1;
+  tmv.tm_isdst = 0;
+  setenv("TZ", "UTC0", 1);
+  tzset();
   const time_t when = mktime(&tmv);
-  time_t now = time(nullptr);
+  setenv("TZ", CORE2_TZ, 1);
+  tzset();
+  const time_t now = time(nullptr);
   if (when <= 0 || now <= 0) {
     protocol_copy_trunc(out, out_len, "?");
     return;
@@ -131,6 +137,10 @@ void apply_project_auth(int code) {
   }
   if (code == 200) {
     s.auth_ok = true;
+    if (strcmp(s.agent, "joining Wi-Fi") == 0 || strcmp(s.agent, "need afp_ key") == 0 ||
+        strcmp(s.agent, "set WIFI SSID") == 0) {
+      s.agent[0] = 0;
+    }
   }
   st.dirty = true;
 }
@@ -162,6 +172,8 @@ void apply_project_stats(const String& body, int code) {
   JsonArray by_agent = doc["by_agent"].as<JsonArray>();
   if (!by_agent.isNull() && by_agent.size() > 0) {
     protocol_copy_trunc(s.agent, sizeof(s.agent), by_agent[0]["agent"] | by_agent[0]["name"] | "");
+  } else if (s.inv == 0) {
+    protocol_copy_trunc(s.agent, sizeof(s.agent), "no traffic");
   }
   st.dirty = true;
 }

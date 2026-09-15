@@ -185,9 +185,10 @@ Do **not** call fleet `/stats/*` with `afp_` (403).
 
 ## 5. Phase D (later — after C useful)
 
-- NVS Wi-Fi + key setup UI  
-- Mute schedule  
-- OTA  
+- [x] NVS Wi-Fi + key setup UI  
+- [x] Project SSE `/projects/{slug}/events`  
+- [x] Mute schedule (`cfg quiet`, NTP)  
+- [x] HTTP OTA (`cfg ota`)  
 
 Do **not** start D until C is desk-useful.
 

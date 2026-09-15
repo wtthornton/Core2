@@ -28,7 +28,10 @@ If the UART chip is CH9102 instead, install M5’s CH9102 VCP package.
 
 Power: USB enumerates the CP2104 from VBUS even if the ESP32 is off. Short-press
 the **left power button** if `esptool` cannot connect. Auto-reset via DTR/RTS
-worked on this unit; the bottom **RST** button is the fallback.
+worked on this unit; the bottom **RST** button is the fallback. Opening a
+serial monitor can also pulse DTR and reboot the running app —
+`firmware/platformio.ini` sets `monitor_dtr = 0` and `monitor_rts = 0`. Flash
+upload still uses auto-reset.
 
 ## Probe (read-only)
 
@@ -45,9 +48,9 @@ Custom firmware (PlatformIO + M5Unified, no M5Burner): [../firmware/PLAN.md](../
 
 ### Firmware currently on this unit
 
-Bring-up dashboard from this repo (`firmware/`, PlatformIO + M5Unified), flashed
-2026-09-11 over COM4. Partition table is Arduino **`default_16MB.csv`**
-(app0/app1 ~6.25 MB each). That upload replaced the previous **WLED** image.
+Bring-up dashboard from this repo (`firmware/`, PlatformIO + M5Unified), last
+flashed **0.3.5**. Partition table is Arduino **`default_16MB.csv`**
+(app0/app1 ~6.25 MB each).
 
 Re-flashing overwrites the dashboard. Confirm the target firmware first.
 

@@ -10,8 +10,8 @@ touchscreen, 2.4 GHz Wi-Fi + Bluetooth 4.2, AXP192/AXP2101 PMU, and Grove /
 M-Bus expansion. It does **not** run Linux. The custom app is PlatformIO +
 **M5Unified**: an AgentForge desk monitor where the **brick talks to AF
 directly** over Wi-Fi (no PC middleware). Ops-cube UI on the 320×240
-touchscreen (Hub/Pulse/Heat/Trail/Beam). Auth: project `afp_` key via
-`/projects/{slug}/…` routes (not fleet `/stats/*`). Firmware **0.2.0**.
+touchscreen (Hub/Pulse/Heat/Trail/Beam/Talk). Auth: project `afp_` key via
+`/projects/{slug}/…` routes (not fleet `/stats/*`). Firmware **0.3.5**.
 See docs/firmware/VISION.md.
 
 ## Start here
@@ -21,6 +21,7 @@ See docs/firmware/VISION.md.
 - [docs/firmware/IMPLEMENTATION_PLAN.md](docs/firmware/IMPLEMENTATION_PLAN.md) — execution plan
 - [docs/INDEX.md](docs/INDEX.md) — documentation map
 - [docs/kb/sources.md](docs/kb/sources.md) — vendor URLs
+- [agents/core2-desk/](agents/core2-desk/) — firmware agent identity (ReportLab Vol 2 via `CORE2_ROOT`)
 
 ## Knowledge base
 
